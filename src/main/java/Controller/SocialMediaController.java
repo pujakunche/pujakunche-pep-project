@@ -1,5 +1,10 @@
 package Controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import Model.Message;
+import Service.AccountService;
+import Service.MessageService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -14,20 +19,63 @@ public class SocialMediaController {
      * suite must receive a Javalin object from this method.
      * @return a Javalin app object which defines the behavior of the Javalin controller.
      */
+
+    MessageService messageService;
+    AccountService accountService;
+
+    public SocialMediaController(){
+        this.messageService = new MessageService();
+        this.accountService = new AccountService();
+    }
+ 
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.get("example-endpoint", this::exampleHandler);
+        // app.get("example-endpoint", this::exampleHandler);
+        app.post("/message",this::postMessage);
 
         return app;
     }
 
+    // public void startAPI(){
+    //     Javalin app = Javalin.create();
+    //     app.get("/books", this::getAllBooksHandler);
+    //     app.post("/books", this::postBookHandler);
+    //     app.get("/authors", this::getAllAuthorsHandler);
+    //     app.post("/authors", this::postAuthorHandler);
+    //     app.get("/books/available", this::getAvailableBooksHandler);
+    //     app.start(8080);
+    // }
+
     /**
      * This is an example handler for an example endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
+     * @throws Exception 
      */
-    private void exampleHandler(Context context) {
-        context.json("sample text");
+    private void postMessage(Context ctx) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(ctx.body(), Message.class);
+        Message createMessage = messageService.createMessage(message);
+        if(createMessage!=null){
+            ctx.json(mapper.writeValueAsString(createMessage));
+        }else{
+            ctx.status(400);
+        }
+
+        
+
     }
+
+
+    // private void postAuthorHandler(Context ctx) throws JsonProcessingException {
+    //     ObjectMapper mapper = new ObjectMapper();
+    //     Author author = mapper.readValue(ctx.body(), Author.class);
+    //     Author addedAuthor = authorService.addAuthor(author);
+    //     if(addedAuthor!=null){
+    //         ctx.json(mapper.writeValueAsString(addedAuthor));
+    //     }else{
+    //         ctx.status(400);
+    //     }
+    // }
 
 
 }
