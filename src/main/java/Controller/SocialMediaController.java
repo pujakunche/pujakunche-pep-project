@@ -36,9 +36,12 @@ public class SocialMediaController {
         // app.get("example-endpoint", this::exampleHandler);
         app.post("/message",this::postMessageHandler);
         app.post("/register", this::createUserHandler);
-       app.get("/login", this::loginHandler);
+       app.get("/login/{username}/{password}", this::loginHandler);
           return app;
     }
+//   //  app.get("/firstname/{first}", ctx -> {
+//         String firstname = ctx.pathParam("first");
+//         ctx.result(firstname);
 
     // public void startAPI(){
     //     Javalin app = Javalin.create();
@@ -77,14 +80,12 @@ public class SocialMediaController {
         }
     }
 
-    private void loginHandler(Context ctx) {
-        ObjectMapper mapper = new ObjectMapper();
-        Account account = mapper.readValue(ctx.body(), Account.class);
-        // String username password
-        Account loginAccount = accountService.loginUser();
-       
+    private void loginHandler(Context ctx) throws Exception {
+        String username = ctx.pathParam("username");
+        String password = ctx.pathParam("password");
+       Account  loginAccount = accountService.loginUser(username , password);
         if(loginAccount!=null){
-            ctx.json(mapper.writeValueAsString(loginAccount));
+            ctx.json(loginAccount);
         }else{
             ctx.status(400);
         }
@@ -101,6 +102,11 @@ public class SocialMediaController {
     //         ctx.status(400);
     //     }
     // }
+
+    // private fun all(ctx: Context) {
+    //     val people: List<Person> = personRepository.findAll().map { entity -> entity.toPerson() }
+    //     ctx.json(people)
+    //   }
 
 
 }
