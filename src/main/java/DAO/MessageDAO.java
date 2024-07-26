@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import Model.Message;
 import Util.ConnectionUtil;
@@ -16,17 +18,14 @@ public class MessageDAO {
     // time_posted_epoch bigint,
     // foreign key (posted_by) references  account(account_id)
 
-    
-    // String sql = "INSERT INTO message(posted_by, message_text, time_posted_epoch) values (?, ?, ?)" ;
 
     public Message insertMessage(Message message){
 
         Connection connection = ConnectionUtil.getConnection();
         try {
-    String sql = "INSERT INTO message(posted_by, message_text, time_posted_epoch) values (?, ?, ?)" ;
-    PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            String sql = "INSERT INTO message(posted_by, message_text, time_posted_epoch) values (?, ?, ?)" ;
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-            //write preparedStatement's setString method here.
             preparedStatement.setInt(1, message.getPosted_by());
             preparedStatement.setString(2, message.getMessage_text());
             preparedStatement.setLong(3, message.getTime_posted_epoch());
@@ -42,4 +41,110 @@ public class MessageDAO {
         }
         return null;
     }
+
+    public Message findMessageById(int messageId){
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            String sql = "SELECT * FROM message WHERE message_id = ?";
+    
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+    
+            preparedStatement.setInt(1, messageId);
+    
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()){
+                Message message = new Message();
+                    message.setMessage_id(rs.getInt("message_id"));
+                    message.setMessage_text(rs.getString("message_text"));
+                    message.setPosted_by(rs.getInt("posted_by"));
+                    message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
+                return message;
+            } 
+        }catch(SQLException e){
+                System.out.println(e.getMessage());
+        }
+        return null;
+    
+    }
+
+
+    public Message updateMessage(Message message){
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            String sql = "UPDATE message SET message_text = ? WHERE  message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setString(1, message.getMessage_text());
+            preparedStatement.setInt(2, message.getMessage_id());
+            //If void is expected
+            preparedStatement.executeUpdate();
+
+           Message returnMessage = this.findMessageById(message.message_id);
+            
+            // ResultSet rs = preparedStatement.executeUpdate();
+                // Message returnMessage = new Message(rs.getInt("flight_id"), rs.getString("departure_city"),
+                //         rs.getString("arrival_city"));
+                // Message returnMessage = new Message();
+                // message.setMessage_id(rs.getInt("message_id"));
+                // message.setMessage_text(rs.getString("message_text"));
+                // message.setPosted_by(rs.getInt("posted_by"));
+                // message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
+            
+            return returnMessage;
+
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+
+    public List<Message> getAllMessages(){
+        Connection connection = ConnectionUtil.getConnection();
+        List<Message> listOfAllMessages = new ArrayList<>();
+        try {
+            String sql = "select * from message";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                Message message = new Message();
+                    message.setMessage_id(rs.getInt("message_id"));
+                    message.setMessage_text(rs.getString("message_text"));
+                    message.setPosted_by(rs.getInt("posted_by"));
+                    message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));       
+                listOfAllMessages.add(message);
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return listOfAllMessages;
+    }
+
+    
+
+
+ 
+    // * String sql = "update TableName set ColumnName1=?, ColumnName2=? where ColumnName3 = ?;";
+
+
+    // try {
+    //     //Write SQL logic here. When inserting, you only need to define the departure_city and arrival_city
+    //     //values (two columns total!)
+    //     String sql = "INSERT INTO flight(departure_city, arrival_city) values (?, ?)" ;
+
+    //     PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+    //     //write preparedStatement's setString and setInt methods here.
+    //     preparedStatement.setString(1, flight.getDeparture_city());
+    //     preparedStatement.setString(2, flight.getArrival_city());
+
+    //     preparedStatement.executeUpdate();
+    //     ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();
+    //     if(pkeyResultSet.next()){
+    //         int generated_flight_id = (int) pkeyResultSet.getLong(1);
+    //         return new Flight(generated_flight_id, flight.getDeparture_city(), flight.getArrival_city());
+    //     }
+
+
+
 }

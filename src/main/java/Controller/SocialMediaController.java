@@ -35,6 +35,7 @@ public class SocialMediaController {
         app.post("/message/{id}",this::postMessageHandler);
         app.post("/register", this::createUserHandler);
        app.get("/login/{username}/{password}", this::loginHandler);
+       app.put("update/{accountId}/{messageId}", this::updateMessageHandler);
           return app;
     }
 //   //  app.get("/firstname/{first}", ctx -> {
@@ -92,6 +93,23 @@ public class SocialMediaController {
         }
 
     }
+    
+    private void updateMessageHandler(Context ctx) throws Exception{
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(ctx.body(), Message.class);
+        String accountId = ctx.pathParam("accountId");
+        String messageId = ctx.pathParam("messageId");
+        int convertedAccountId = Integer.parseInt(accountId);
+        int convertedMessageId = Integer.parseInt(messageId);
+        Message updateMessage = messageService.updateMessage(message, convertedAccountId , convertedMessageId);
+        if(updateMessage!=null){
+            ctx.json(mapper.writeValueAsString(updateMessage));
+        }else{
+            ctx.status(400);
+        }
+    }
+
+    }
 
     // private void postAuthorHandler(Context ctx) throws JsonProcessingException {
     //     ObjectMapper mapper = new ObjectMapper();
@@ -110,4 +128,4 @@ public class SocialMediaController {
     //   }
 
 
-}
+
