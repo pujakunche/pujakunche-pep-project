@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Optional;
 
 import Model.Account;
@@ -82,6 +83,50 @@ public Account findUserById(int id){
 
 }
 
+
+
+// public List<String> getAllUsernames(){
+//     Connection connection = ConnectionUtil.getConnection();
+//     List<String> listOfAllMessages = new ArrayList<>();
+//     try {
+//         String sql = "select And from account";
+//         PreparedStatement ps = connection.prepareStatement(sql);
+//         ResultSet rs = ps.executeQuery();
+//         while(rs.next()){
+//             Message message = new Message();
+//                 message.setMessage_id(rs.getInt("message_id"));
+//                 message.setMessage_text(rs.getString("message_text"));
+//                 message.setPosted_by(rs.getInt("posted_by"));
+//                 message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));       
+//             listOfAllMessages.add(message);
+//         }
+//     }catch(SQLException e){
+//         e.printStackTrace();
+//     }
+//     return listOfAllMessages;
+// }
+
+public Account findDuplicateUsernames(String username){
+    Connection connection = ConnectionUtil.getConnection();
+    try {
+        String sql = "SELECT * FROM account WHERE username = ?";
+
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+        preparedStatement.setString(1, username);
+
+        ResultSet rs = preparedStatement.executeQuery();
+        while(rs.next()){
+            Account account = new Account(rs.getInt("account_id"), rs.getString("username"),
+                    rs.getString("password"));
+            return account;
+        } 
+    }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+
+}
 }
 // public Account findMessageById(int accountId){
 //     Connection connection = ConnectionUtil.getConnection();
