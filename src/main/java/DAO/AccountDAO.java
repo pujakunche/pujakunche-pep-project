@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import Model.Account;
 import Util.ConnectionUtil;
+import io.javalin.http.UnauthorizedResponse;
 
 public class AccountDAO {
 
@@ -36,27 +37,27 @@ public class AccountDAO {
         return null;
     }
 
-    public Account findUserByUsernameAndPassword(String username, String password){
+    public Account findUserByUsernameAndPassword(Account account) throws UnauthorizedResponse{
         Connection connection = ConnectionUtil.getConnection();
         try {
             String sql = "SELECT * FROM account WHERE username = ? AND password = ?";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password);
+            preparedStatement.setString(1, account.getUsername());
+            preparedStatement.setString(2, account.getPassword());
 
 
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
-                Account account = new Account(rs.getInt("account_id"), rs.getString("username"),
+                Account result  = new Account(rs.getInt("account_id"), rs.getString("username"),
                         rs.getString("password"));
-                return account;
+                return result;
             } 
         }catch(SQLException e){
                 System.out.println(e.getMessage());
             }
-            return null;
+            throw new UnauthorizedResponse();
 
     }
     

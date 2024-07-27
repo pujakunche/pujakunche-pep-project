@@ -1,5 +1,7 @@
 package Controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import Model.Account;
@@ -8,6 +10,7 @@ import Service.AccountService;
 import Service.MessageService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import io.javalin.http.UnauthorizedResponse;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -34,7 +37,7 @@ public class SocialMediaController {
         // app.get("example-endpoint", this::exampleHandler);
         app.post("/message/{id}",this::postMessageHandler);
         app.post("/register", this::createUserHandler);
-       app.get("/login/{username}/{password}", this::loginHandler);
+       app.post("/login", this::loginHandler);
        app.put("update/{accountId}/{messageId}", this::updateMessageHandler);
           return app;
     }
@@ -83,14 +86,22 @@ public class SocialMediaController {
     }
 
     private void loginHandler(Context ctx) throws Exception {
-        String username = ctx.pathParam("username");
-        String password = ctx.pathParam("password");
-       Account  loginAccount = accountService.loginUser(username , password);
-        if(loginAccount!=null){
-            ctx.json(loginAccount);
+        ObjectMapper mapper = new ObjectMapper();
+        Account account = mapper.readValue(ctx.body(), Account.class);
+        Account loginUser = accountService.loginUser(account);
+        if(loginUser!=null){
+            ctx.json(mapper.writeValueAsString(loginUser));
         }else{
-            ctx.status(400);
+            ctx.status(401);
         }
+    //     String username = ctx.pathParam("username");
+    //     String password = ctx.pathParam("password");
+    //    Account  loginAccount = accountService.loginUser(username , password);
+    //     if(loginAccount!=null){
+    //         ctx.json(loginAccount);
+    //     }else{
+    //         ctx.status(400);
+    //     }
 
     }
     

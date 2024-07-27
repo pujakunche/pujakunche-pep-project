@@ -6,6 +6,7 @@ import java.util.List;
 
 import DAO.AccountDAO;
 import Model.Account;
+import io.javalin.http.UnauthorizedResponse;
 
 public class AccountService {
     
@@ -43,18 +44,20 @@ public class AccountService {
             isDuplicated = true;
             return isDuplicated;
         }
-            // for (Account element  : usernameList) {
-            //     if(!element.getUsername().equals(username)){
-            //         continue;
-            //     }else{
-            //         isDuplicated = true;
-            //         return isDuplicated ;
-            //     }
-            }
-    
-    public Account loginUser(String username , String password){
-        Account fetchUser = accountDAO.findUserByUsernameAndPassword(username,password);
-        return fetchUser;
+    }
+
+    public Account loginUser(Account account) throws UnauthorizedResponse{
+        try {
+            Account fetchUser = accountDAO.findUserByUsernameAndPassword(account);
+            return fetchUser;
+
+        } catch (UnauthorizedResponse e){
+            // throw new UnauthorizedResponse(e.getMessage());
+            return null;
+        }
+
+        //return it to be null
+
 
     }
 
