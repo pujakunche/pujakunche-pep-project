@@ -1,5 +1,7 @@
 package Controller;
 
+import java.util.List;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import Model.Account;
 import Model.Message;
@@ -35,6 +37,8 @@ public class SocialMediaController {
        app.post("/login", this::loginHandler);
        app.patch("messages/{messageId}", this::updateMessageHandler);
        app.get("messages/{messageId}", this::getMessageHandler);
+       app.get("messages", this::getAllMessageHandler);
+
 
           return app;
     }
@@ -99,6 +103,16 @@ public class SocialMediaController {
         Message fetchMessage = messageService.fetchMessage(convertedMessageId);
         if(fetchMessage!=null){
             ctx.json(mapper.writeValueAsString(fetchMessage));
+        }else{
+            ctx.status(400);
+        }
+    }
+
+    private void getAllMessageHandler(Context ctx) throws Exception{
+        ObjectMapper mapper = new ObjectMapper();
+        List<Message> fetchAllMessage = messageService.fetchAllMessage();
+        if(fetchAllMessage!=null){
+            ctx.json(mapper.writeValueAsString(fetchAllMessage));
         }else{
             ctx.status(400);
         }

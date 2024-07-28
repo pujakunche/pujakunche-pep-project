@@ -1,5 +1,7 @@
 package Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import DAO.AccountDAO;
@@ -80,7 +82,12 @@ public class MessageService {
                 System.out.println("Message not found");
                 throw new IllegalArgumentException(e.getMessage());
             }
-         
+        }
+
+        public List<Message> fetchAllMessage(){
+            List<Message> collectAllMessage = messageDao.getAllMessages();
+            return collectAllMessage;
+            
         }
 
 
