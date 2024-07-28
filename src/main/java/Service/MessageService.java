@@ -18,15 +18,22 @@ public class MessageService {
     }
 
 
-    public Message createMessage(Message message, int id) throws Exception{
-       Optional<Account> fetchUser = Optional.of(accountDAO.findUserById(id));
+    public Message createMessage(Message message) throws Exception{
+       Optional<Account> fetchUser = Optional.of(accountDAO.findUserById(message.getPosted_by()));
        if(fetchUser.isPresent()){
             Message newMessage = new Message();
             newMessage.setMessage_text(message.getMessage_text());
-            newMessage.setPosted_by(id);
+            newMessage.setPosted_by(message.getPosted_by());
             newMessage.setTime_posted_epoch(message.getTime_posted_epoch());
-            Message result = messageDao.insertMessage(newMessage);
-            return result;
+
+            if((!newMessage.getMessage_text().isBlank()) && (message.getMessage_text().length() < 225)){
+                Message result = messageDao.insertMessage(newMessage);
+                return result;
+            }else {
+                System.out.println("Message text field blank");
+                return null;
+            }
+
        }else{
         System.out.println("no user found");
         return null;

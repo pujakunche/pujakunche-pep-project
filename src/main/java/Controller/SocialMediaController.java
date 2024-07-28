@@ -1,16 +1,12 @@
 package Controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import Model.Account;
 import Model.Message;
 import Service.AccountService;
 import Service.MessageService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
-import io.javalin.http.UnauthorizedResponse;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -34,26 +30,12 @@ public class SocialMediaController {
  
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        // app.get("example-endpoint", this::exampleHandler);
-        app.post("/message/{id}",this::postMessageHandler);
+        app.post("/messages",this::postMessageHandler);
         app.post("/register", this::createUserHandler);
        app.post("/login", this::loginHandler);
        app.put("update/{accountId}/{messageId}", this::updateMessageHandler);
           return app;
     }
-//   //  app.get("/firstname/{first}", ctx -> {
-//         String firstname = ctx.pathParam("first");
-//         ctx.result(firstname);
-
-    // public void startAPI(){
-    //     Javalin app = Javalin.create();
-    //     app.get("/books", this::getAllBooksHandler);
-    //     app.post("/books", this::postBookHandler);
-    //     app.get("/authors", this::getAllAuthorsHandler);
-    //     app.post("/authors", this::postAuthorHandler);
-    //     app.get("/books/available", this::getAvailableBooksHandler);
-    //     app.start(8080);
-    // }
 
     /**
      * This is an example handler for an example endpoint.
@@ -64,9 +46,7 @@ public class SocialMediaController {
      private void postMessageHandler(Context ctx) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(ctx.body(), Message.class);
-        String id = ctx.pathParam("id");
-        int convertedId = Integer.parseInt(id);
-        Message createMessage = messageService.createMessage(message, convertedId);
+        Message createMessage = messageService.createMessage(message);
         if(createMessage!=null){
             ctx.json(mapper.writeValueAsString(createMessage));
         }else{
