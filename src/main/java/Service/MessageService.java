@@ -97,10 +97,13 @@ public class MessageService {
             } else {
                 return null;
             }
-
-        
-
         }
+
+        public List<Message> fetchAllMessageByUser(int accountId){
+            List<Message> collectAllMessage = messageDao.getAllMessagesByUser(accountId);
+            return collectAllMessage;
+        }
+
 
 
 

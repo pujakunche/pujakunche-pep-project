@@ -39,6 +39,7 @@ public class SocialMediaController {
        app.get("messages/{messageId}", this::getMessageHandler);
        app.get("messages", this::getAllMessageHandler);
        app.delete("messages/{messageId}", this::deleteMessageHandler);
+       app.get("accounts/{accountId}/messages", this::getAllMessageByUserHandler);
           return app;
     }
 
@@ -129,6 +130,19 @@ public class SocialMediaController {
             ctx.status(400);
         }
     }
+
+    private void getAllMessageByUserHandler(Context ctx) throws Exception{
+        ObjectMapper mapper = new ObjectMapper();
+        String accountId = ctx.pathParam("accountId");
+        int convertedAccountId = Integer.parseInt(accountId);
+        List<Message> fetchAllMessageByUser = messageService.fetchAllMessageByUser(convertedAccountId);
+        if(fetchAllMessageByUser!=null){
+            ctx.json(mapper.writeValueAsString(fetchAllMessageByUser));
+        }else{
+            ctx.status(400);
+        }
+    }
+
 
 
     }
