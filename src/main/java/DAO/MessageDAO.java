@@ -145,31 +145,34 @@ public class MessageDAO {
         return listOfAllMessages;
     }
 
-    
+    public void removeMessage(int messageId){
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            String sql = "DELETE FROM message WHERE message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
+            preparedStatement.setInt(1, messageId);
+            //If void is expected
+            preparedStatement.executeUpdate();
 
- 
-    // * String sql = "update TableName set ColumnName1=?, ColumnName2=? where ColumnName3 = ?;";
+        //    Message returnMessage = this.findMessageById(tempMessageId);
+            
+            // ResultSet rs = preparedStatement.executeUpdate();
+                // Message returnMessage = new Message(rs.getInt("flight_id"), rs.getString("departure_city"),
+                //         rs.getString("arrival_city"));
+                // Message returnMessage = new Message();
+                // message.setMessage_id(rs.getInt("message_id"));
+                // message.setMessage_text(rs.getString("message_text"));
+                // message.setPosted_by(rs.getInt("posted_by"));
+                // message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
+            
+            // return returnMessage;
 
-
-    // try {
-    //     //Write SQL logic here. When inserting, you only need to define the departure_city and arrival_city
-    //     //values (two columns total!)
-    //     String sql = "INSERT INTO flight(departure_city, arrival_city) values (?, ?)" ;
-
-    //     PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-
-    //     //write preparedStatement's setString and setInt methods here.
-    //     preparedStatement.setString(1, flight.getDeparture_city());
-    //     preparedStatement.setString(2, flight.getArrival_city());
-
-    //     preparedStatement.executeUpdate();
-    //     ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();
-    //     if(pkeyResultSet.next()){
-    //         int generated_flight_id = (int) pkeyResultSet.getLong(1);
-    //         return new Flight(generated_flight_id, flight.getDeparture_city(), flight.getArrival_city());
-    //     }
-
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        // return null;
+    }
 
 
 }

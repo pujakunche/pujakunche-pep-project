@@ -38,8 +38,7 @@ public class SocialMediaController {
        app.patch("messages/{messageId}", this::updateMessageHandler);
        app.get("messages/{messageId}", this::getMessageHandler);
        app.get("messages", this::getAllMessageHandler);
-
-
+       app.delete("messages/{messageId}", this::deleteMessageHandler);
           return app;
     }
 
@@ -118,24 +117,23 @@ public class SocialMediaController {
         }
     }
 
+    private void deleteMessageHandler(Context ctx) throws Exception{
+        ObjectMapper mapper = new ObjectMapper();
+        // Message message = mapper.readValue(ctx.body(), Message.class);
+        String messageId = ctx.pathParam("messageId");
+        int convertedMessageId = Integer.parseInt(messageId);
+        Message deleteMessage = messageService.deleteMessage(convertedMessageId);
+        if(deleteMessage!=null){
+            ctx.json(mapper.writeValueAsString(deleteMessage));
+        }else{
+            ctx.status(400);
+        }
+    }
+
 
     }
 
-    // private void postAuthorHandler(Context ctx) throws JsonProcessingException {
-    //     ObjectMapper mapper = new ObjectMapper();
-    //     Author author = mapper.readValue(ctx.body(), Author.class);
-    //     Author addedAuthor = authorService.addAuthor(author);
-    //     if(addedAuthor!=null){
-    //         ctx.json(mapper.writeValueAsString(addedAuthor));
-    //     }else{
-    //         ctx.status(400);
-    //     }
-    // }
 
-    // private fun all(ctx: Context) {
-    //     val people: List<Person> = personRepository.findAll().map { entity -> entity.toPerson() }
-    //     ctx.json(people)
-    //   }
 
 
 

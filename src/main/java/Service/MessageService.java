@@ -87,9 +87,20 @@ public class MessageService {
         public List<Message> fetchAllMessage(){
             List<Message> collectAllMessage = messageDao.getAllMessages();
             return collectAllMessage;
-            
         }
 
+        public Message deleteMessage(int messageId){
+            Optional<Message> findMessage = Optional.of(messageDao.findMessageById(messageId));
+            if(findMessage.isPresent()){
+                messageDao.removeMessage(messageId);
+                return findMessage.get();
+            } else {
+                return null;
+            }
+
+        
+
+        }
 
 
 
