@@ -67,10 +67,28 @@ public class MessageService {
                 throw new InterruptedException();
             }
         }
-    //    }else{
-    //     System.out.println("no user found");
-    //     return null;
-    //    }
+
+        public Message fetchMessage(int messageId){
+            try{
+                Optional<Message> selectMessage = Optional.of(messageDao.findMessageById(messageId));
+                if(selectMessage.isPresent()) {
+                    return selectMessage.get();
+                } else {
+                    return null;
+                }
+            } catch(IllegalArgumentException e){
+                System.out.println("Message not found");
+                throw new IllegalArgumentException(e.getMessage());
+            }
+         
+        }
+
+
+
+
+
+
+
      }
 
      

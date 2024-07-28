@@ -34,6 +34,8 @@ public class SocialMediaController {
         app.post("/register", this::createUserHandler);
        app.post("/login", this::loginHandler);
        app.patch("messages/{messageId}", this::updateMessageHandler);
+       app.get("messages/{messageId}", this::getMessageHandler);
+
           return app;
     }
 
@@ -88,6 +90,20 @@ public class SocialMediaController {
             ctx.status(400);
         }
     }
+
+    private void getMessageHandler(Context ctx) throws Exception{
+        ObjectMapper mapper = new ObjectMapper();
+        // Message message = mapper.readValue(ctx.body(), Message.class);
+        String messageId = ctx.pathParam("messageId");
+        int convertedMessageId = Integer.parseInt(messageId);
+        Message fetchMessage = messageService.fetchMessage(convertedMessageId);
+        if(fetchMessage!=null){
+            ctx.json(mapper.writeValueAsString(fetchMessage));
+        }else{
+            ctx.status(400);
+        }
+    }
+
 
     }
 
