@@ -33,7 +33,7 @@ public class SocialMediaController {
         app.post("/messages",this::postMessageHandler);
         app.post("/register", this::createUserHandler);
        app.post("/login", this::loginHandler);
-       app.put("update/{accountId}/{messageId}", this::updateMessageHandler);
+       app.patch("messages/{messageId}", this::updateMessageHandler);
           return app;
     }
 
@@ -74,25 +74,14 @@ public class SocialMediaController {
         }else{
             ctx.status(401);
         }
-    //     String username = ctx.pathParam("username");
-    //     String password = ctx.pathParam("password");
-    //    Account  loginAccount = accountService.loginUser(username , password);
-    //     if(loginAccount!=null){
-    //         ctx.json(loginAccount);
-    //     }else{
-    //         ctx.status(400);
-    //     }
-
     }
     
     private void updateMessageHandler(Context ctx) throws Exception{
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(ctx.body(), Message.class);
-        String accountId = ctx.pathParam("accountId");
         String messageId = ctx.pathParam("messageId");
-        int convertedAccountId = Integer.parseInt(accountId);
         int convertedMessageId = Integer.parseInt(messageId);
-        Message updateMessage = messageService.updateMessage(message, convertedAccountId , convertedMessageId);
+        Message updateMessage = messageService.updateMessage(message, convertedMessageId);
         if(updateMessage!=null){
             ctx.json(mapper.writeValueAsString(updateMessage));
         }else{

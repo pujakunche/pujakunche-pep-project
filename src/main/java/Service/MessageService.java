@@ -6,6 +6,7 @@ import DAO.AccountDAO;
 import DAO.MessageDAO;
 import Model.Account;
 import Model.Message;
+import io.javalin.http.NotFoundResponse;
 
 public class MessageService {
        
@@ -33,39 +34,46 @@ public class MessageService {
                 System.out.println("Message text field blank");
                 return null;
             }
-
        }else{
         System.out.println("no user found");
         return null;
        }
      }
 
-     public Message updateMessage(Message message, int accountId, int messageId){
-        //Looking for user if account exists
-        Optional <Account> fetchUser = Optional.of(accountDAO.findUserById(accountId));
-        if(fetchUser.isPresent()){
-            Optional<Message> findMessage = Optional.of(messageDao.findMessageById(messageId));
-            if(findMessage.isPresent()){
+     public Message updateMessage(Message message, int messageId) throws InterruptedException{
+        Optional<Message> fetchMessage = Optional.of(messageDao.findMessageById(messageId));
+        if(fetchMessage.isPresent()){
+            // Optional<Message> findMessage = Optional.of(messageDao.findMessageById(messageId));
+            // if(findMessage.isPresent()){
+
+            String checkMessage = message.getMessage_text();
+
+            if(checkMessage.equals(null) || message.getMessage_text().isBlank()){
+                System.out.println("Please Entere a empty string");
+                return null;
+            } 
                 Message updatedMessage = new Message();
+                updatedMessage.setMessage_id(messageId);
                 updatedMessage.setMessage_text(message.getMessage_text());
-                updatedMessage.setPosted_by(accountId);
-                updatedMessage.setPosted_by(messageId);
-                updatedMessage.setTime_posted_epoch(message.getTime_posted_epoch());
+                updatedMessage.setPosted_by(fetchMessage.get().getPosted_by());
+                updatedMessage.setTime_posted_epoch(fetchMessage.get().getTime_posted_epoch());
                 Message result = messageDao.updateMessage(updatedMessage);
 
                 // Optional<Message> verifyMessage = Optional.of(messageDao.findMessageById(messageId));
                 return result;
             } else {
                 System.out.println("No message found");
-                return null;
+                // return null;
+                throw new InterruptedException();
             }
-       }else{
-        System.out.println("no user found");
-        return null;
-       }
+        }
+    //    }else{
+    //     System.out.println("no user found");
+    //     return null;
+    //    }
      }
 
-     }
+     
 
 
 

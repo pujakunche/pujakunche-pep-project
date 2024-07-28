@@ -65,13 +65,37 @@ public class MessageDAO {
                 System.out.println(e.getMessage());
         }
         return null;
+    }
+
+    public Message findMessageByText(String text){
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            String sql = "SELECT * FROM message WHERE message_text = ?";
     
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+    
+            preparedStatement.setString(1, text);
+    
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()){
+                Message message = new Message();
+                    message.setMessage_id(rs.getInt("message_id"));
+                    message.setMessage_text(rs.getString("message_text"));
+                    message.setPosted_by(rs.getInt("posted_by"));
+                    message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
+                return message;
+            } 
+        }catch(SQLException e){
+                System.out.println(e.getMessage());
+        }
+        return null;
     }
 
 
     public Message updateMessage(Message message){
         Connection connection = ConnectionUtil.getConnection();
         try {
+            int tempMessageId = message.getMessage_id();
             String sql = "UPDATE message SET message_text = ? WHERE  message_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
@@ -80,7 +104,7 @@ public class MessageDAO {
             //If void is expected
             preparedStatement.executeUpdate();
 
-           Message returnMessage = this.findMessageById(message.message_id);
+           Message returnMessage = this.findMessageById(tempMessageId);
             
             // ResultSet rs = preparedStatement.executeUpdate();
                 // Message returnMessage = new Message(rs.getInt("flight_id"), rs.getString("departure_city"),
