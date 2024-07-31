@@ -68,7 +68,7 @@ public class MessageService {
 
         public Message updateMessage(Message message, int messageId) {
             Message fetchMessage = messageDao.findMessageById(messageId);
-            if(fetchMessage.message_id != 0){
+            if(messageDao.findMessageById(messageId) != null){
                 String checkMessage = message.getMessage_text();
     
                 if(checkMessage.equals(null) || message.getMessage_text().isBlank() || message.getMessage_text().length() > 255){
