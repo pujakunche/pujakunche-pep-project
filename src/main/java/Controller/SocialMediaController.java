@@ -1,17 +1,14 @@
 package Controller;
 
-import java.io.IOException;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import Model.Account;
 import Model.Message;
 import Service.AccountService;
 import Service.MessageService;
 import io.javalin.Javalin;
-import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 
 /**
@@ -38,15 +35,12 @@ public class SocialMediaController {
         Javalin app = Javalin.create();
         app.post("/messages",this::postMessageHandler);
         app.post("/register", this::createUserHandler);
-       app.post("/login", this::loginHandler);
-       app.patch("/messages/{message_id}", this::updateMessageHandler);
-       app.get("/messages/{message_id}", this::getMessageHandler);
-       app.get("messages", this::getAllMessageHandler);
-       app.delete("/messages/{message_id}", this::deleteMessageHandler);
-       app.get("accounts/{accountId}/messages", this::getAllMessageByUserHandler);
-    //    app.exception(BadRequestResponse.class, (e, ctx) -> {
-    //     ctx.json("Bad request: ${e.message}.").status(400);
-    // });
+        app.post("/login", this::loginHandler);
+        app.patch("/messages/{message_id}", this::updateMessageHandler);
+        app.get("/messages/{message_id}", this::getMessageHandler);
+        app.get("messages", this::getAllMessageHandler);
+        app.delete("/messages/{message_id}", this::deleteMessageHandler);
+        app.get("accounts/{accountId}/messages", this::getAllMessageByUserHandler);
           return app;
     }
 
@@ -96,7 +90,6 @@ public class SocialMediaController {
         int convertedMessageId = Integer.parseInt(messageId);
         Message updateMessage = messageService.updateMessage(message, convertedMessageId);
         if(updateMessage!=null){
-            // if(updateMessage.getMessage_id()!=0){
             ctx.json(mapper.writeValueAsString(updateMessage));
         }else{
             ctx.status(400);
@@ -105,7 +98,6 @@ public class SocialMediaController {
 
     private void getMessageHandler(Context ctx) throws JsonProcessingException{
         ObjectMapper mapper = new ObjectMapper();
-        // Message message = mapper.readValue(ctx.body(), Message.class);
         int messageId = Integer.parseInt(ctx.pathParam("message_id"));
         Message fetchMessage = messageService.fetchMessage(messageId);
         if(fetchMessage!=null){
@@ -147,7 +139,4 @@ public class SocialMediaController {
             ctx.status(400);
         }
     }
-
-
-
     }

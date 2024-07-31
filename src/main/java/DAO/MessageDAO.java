@@ -10,15 +10,8 @@ import java.util.List;
 
 import Model.Message;
 import Util.ConnectionUtil;
-import io.javalin.http.BadRequestResponse;
 
 public class MessageDAO {
-    //message_id int primary key auto_increment,
-    // posted_by int,
-    // message_text varchar(255),
-    // time_posted_epoch bigint,
-    // foreign key (posted_by) references  account(account_id)
-
 
     public Message insertMessage(Message message){
 
@@ -43,31 +36,6 @@ public class MessageDAO {
         }
         return null;
     }
-
-    // public Message findMessageById(int messageId){
-    //     Connection connection = ConnectionUtil.getConnection();
-    //     try {
-            
-    //         String sql = "SELECT * FROM message WHERE message_id = ?";
-    
-    //         PreparedStatement preparedStatement = connection.prepareStatement(sql);
-    
-    //         preparedStatement.setInt(1, messageId);
-    
-    //         ResultSet rs = preparedStatement.executeQuery();
-    //         while(rs.next()){
-    //             Message message = new Message();
-    //                 message.setMessage_id(rs.getInt("message_id"));
-    //                 message.setMessage_text(rs.getString("message_text"));
-    //                 message.setPosted_by(rs.getInt("posted_by"));
-    //                 message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
-    //             return message;
-    //         } 
-    //     }catch(SQLException e){
-    //             System.out.println(e.getMessage());
-    //     }
-    //     return null;
-    // }
 
     public Message findMessageById(int messageId) {
         Connection connection = ConnectionUtil.getConnection();
@@ -114,7 +82,6 @@ public class MessageDAO {
         return null;
     }
 
-
     public Message updateMessage(Message message){
         Connection connection = ConnectionUtil.getConnection();
         try {
@@ -124,19 +91,9 @@ public class MessageDAO {
 
             preparedStatement.setString(1, message.getMessage_text());
             preparedStatement.setInt(2, message.getMessage_id());
-            //If void is expected
             preparedStatement.executeUpdate();
 
            Message returnMessage = this.findMessageById(tempMessageId);
-            
-            // ResultSet rs = preparedStatement.executeUpdate();
-                // Message returnMessage = new Message(rs.getInt("flight_id"), rs.getString("departure_city"),
-                //         rs.getString("arrival_city"));
-                // Message returnMessage = new Message();
-                // message.setMessage_id(rs.getInt("message_id"));
-                // message.setMessage_text(rs.getString("message_text"));
-                // message.setPosted_by(rs.getInt("posted_by"));
-                // message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
             
             return returnMessage;
 
@@ -145,7 +102,6 @@ public class MessageDAO {
         }
         return null;
     }
-
 
     public List<Message> getAllMessages(){
         Connection connection = ConnectionUtil.getConnection();
@@ -175,26 +131,11 @@ public class MessageDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.setInt(1, messageId);
-            //If void is expected
             preparedStatement.executeUpdate();
-
-        //    Message returnMessage = this.findMessageById(tempMessageId);
-            
-            // ResultSet rs = preparedStatement.executeUpdate();
-                // Message returnMessage = new Message(rs.getInt("flight_id"), rs.getString("departure_city"),
-                //         rs.getString("arrival_city"));
-                // Message returnMessage = new Message();
-                // message.setMessage_id(rs.getInt("message_id"));
-                // message.setMessage_text(rs.getString("message_text"));
-                // message.setPosted_by(rs.getInt("posted_by"));
-                // message.setTime_posted_epoch(rs.getLong("time_posted_epoch"));
-            
-            // return returnMessage;
 
         }catch(SQLException e){
             System.out.println(e.getMessage());
         }
-        // return null;
     }
 
     public List<Message> getAllMessagesByUser(int accountId){
@@ -218,7 +159,4 @@ public class MessageDAO {
         }
         return listOfAllMessages;
     }
-
-
-
 }
