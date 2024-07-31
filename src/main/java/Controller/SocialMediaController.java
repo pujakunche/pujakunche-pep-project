@@ -42,7 +42,7 @@ public class SocialMediaController {
        app.patch("/messages/{message_id}", this::updateMessageHandler);
        app.get("/messages/{message_id}", this::getMessageHandler);
        app.get("messages", this::getAllMessageHandler);
-       app.delete("messages/{messageId}", this::deleteMessageHandler);
+       app.delete("/messages/{message_id}", this::deleteMessageHandler);
        app.get("accounts/{accountId}/messages", this::getAllMessageByUserHandler);
     //    app.exception(BadRequestResponse.class, (e, ctx) -> {
     //     ctx.json("Bad request: ${e.message}.").status(400);
@@ -100,8 +100,6 @@ public class SocialMediaController {
             ctx.json(mapper.writeValueAsString(updateMessage));
         }else{
             ctx.status(400);
-
-            
         }
     }
 
@@ -127,16 +125,14 @@ public class SocialMediaController {
         }
     }
 
-    private void deleteMessageHandler(Context ctx) throws Exception{
+    private void deleteMessageHandler(Context ctx) throws JsonProcessingException{
         ObjectMapper mapper = new ObjectMapper();
-        // Message message = mapper.readValue(ctx.body(), Message.class);
-        String messageId = ctx.pathParam("messageId");
-        int convertedMessageId = Integer.parseInt(messageId);
-        Message deleteMessage = messageService.deleteMessage(convertedMessageId);
+        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+        Message deleteMessage = messageService.deleteMessage(messageId);
         if(deleteMessage!=null){
-            ctx.json(mapper.writeValueAsString(deleteMessage));
+            ctx.json(mapper.writeValueAsString(deleteMessage)).status(200);
         }else{
-            ctx.status(400);
+            ctx.status(200).json("");
         }
     }
 

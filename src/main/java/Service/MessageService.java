@@ -80,10 +80,10 @@ public class MessageService {
         }
 
         public Message deleteMessage(int messageId){
-            Optional<Message> findMessage = Optional.of(messageDao.findMessageById(messageId));
-            if(findMessage.isPresent()){
+            Message findMessage = messageDao.findMessageById(messageId);
+            if(messageDao.findMessageById(messageId) != null){
                 messageDao.removeMessage(messageId);
-                return findMessage.get();
+                return findMessage;
             } else {
                 return null;
             }
