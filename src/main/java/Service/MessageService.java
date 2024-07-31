@@ -42,28 +42,52 @@ public class MessageService {
      }
 
 
-    public Message updateMessage(Message message, int messageId) throws InterruptedException{
-        Optional<Message> fetchMessage = Optional.of(messageDao.findMessageById(messageId));
-        if(fetchMessage.isPresent()){
-            String checkMessage = message.getMessage_text();
+    // public Message updateMessage(Message message, int messageId) throws InterruptedException{
+    //     Optional<Message> fetchMessage = Optional.of(messageDao.findMessageById(messageId));
+    //     if(fetchMessage.isPresent()){
+    //         String checkMessage = message.getMessage_text();
 
-            if(checkMessage.equals(null) || message.getMessage_text().isBlank() || message.getMessage_text().length() > 255){
-                System.out.println("Please Entere a empty string");
-                throw new IllegalArgumentException();
-            } 
-                Message updatedMessage = new Message();
-                updatedMessage.setMessage_id(messageId);
-                updatedMessage.setMessage_text(message.getMessage_text());
-                updatedMessage.setPosted_by(fetchMessage.get().getPosted_by());
-                updatedMessage.setTime_posted_epoch(fetchMessage.get().getTime_posted_epoch());
-                Message result = messageDao.updateMessage(updatedMessage);
+    //         if(checkMessage.equals(null) || message.getMessage_text().isBlank() || message.getMessage_text().length() > 255){
+    //             System.out.println("Please Entere a empty string");
+    //             throw new IllegalArgumentException();
+    //         } 
+    //             Message updatedMessage = new Message();
+    //             updatedMessage.setMessage_id(messageId);
+    //             updatedMessage.setMessage_text(message.getMessage_text());
+    //             updatedMessage.setPosted_by(fetchMessage.get().getPosted_by());
+    //             updatedMessage.setTime_posted_epoch(fetchMessage.get().getTime_posted_epoch());
+    //             Message result = messageDao.updateMessage(updatedMessage);
 
-                return result;
-            } else {
-                System.out.println("No message found");
-                throw new InterruptedException();
+    //             return result;
+    //         } else {
+    //             System.out.println("No message found");
+    //             throw new InterruptedException();
+    //         }
+    //     }
+
+
+        public Message updateMessage(Message message, int messageId) {
+            Message fetchMessage = messageDao.findMessageById(messageId);
+            if(fetchMessage.message_id != 0){
+                String checkMessage = message.getMessage_text();
+    
+                if(checkMessage.equals(null) || message.getMessage_text().isBlank() || message.getMessage_text().length() > 255){
+                    System.out.println("Please Entere a empty string");
+                    return null;
+                } 
+                    Message updatedMessage = new Message();
+                    updatedMessage.setMessage_id(messageId);
+                    updatedMessage.setMessage_text(message.getMessage_text());
+                    updatedMessage.setPosted_by(fetchMessage.getPosted_by());
+                    updatedMessage.setTime_posted_epoch(fetchMessage.getTime_posted_epoch());
+                    Message result = messageDao.updateMessage(updatedMessage);
+    
+                    return result;
+                } else {
+                    System.out.println("No message found");
+                    return null;
+                }
             }
-        }
 
         public Message fetchMessage(int messageId){
             if(messageDao.findMessageById(messageId) != null) {

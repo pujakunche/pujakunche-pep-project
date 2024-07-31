@@ -89,14 +89,14 @@ public class SocialMediaController {
         }
     }
     
-    private void updateMessageHandler(Context ctx) throws JsonProcessingException, InterruptedException {
+    private void updateMessageHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(ctx.body(), Message.class);
         String messageId = ctx.pathParam("message_id");
         int convertedMessageId = Integer.parseInt(messageId);
         Message updateMessage = messageService.updateMessage(message, convertedMessageId);
-        // if(updateMessage!=null){
-            if(updateMessage.getMessage_id()!=0){
+        if(updateMessage!=null){
+            // if(updateMessage.getMessage_id()!=0){
             ctx.json(mapper.writeValueAsString(updateMessage));
         }else{
             ctx.status(400);
