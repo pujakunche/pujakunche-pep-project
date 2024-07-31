@@ -1,6 +1,6 @@
 package Service;
 
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -8,7 +8,6 @@ import DAO.AccountDAO;
 import DAO.MessageDAO;
 import Model.Account;
 import Model.Message;
-import io.javalin.http.NotFoundResponse;
 
 public class MessageService {
        
@@ -42,17 +41,15 @@ public class MessageService {
        }
      }
 
-     public Message updateMessage(Message message, int messageId) throws InterruptedException{
+
+    public Message updateMessage(Message message, int messageId) throws InterruptedException{
         Optional<Message> fetchMessage = Optional.of(messageDao.findMessageById(messageId));
         if(fetchMessage.isPresent()){
-            // Optional<Message> findMessage = Optional.of(messageDao.findMessageById(messageId));
-            // if(findMessage.isPresent()){
-
             String checkMessage = message.getMessage_text();
 
-            if(checkMessage.equals(null) || message.getMessage_text().isBlank()){
+            if(checkMessage.equals(null) || message.getMessage_text().isBlank() || message.getMessage_text().length() > 255){
                 System.out.println("Please Entere a empty string");
-                return null;
+                throw new IllegalArgumentException();
             } 
                 Message updatedMessage = new Message();
                 updatedMessage.setMessage_id(messageId);
@@ -61,28 +58,21 @@ public class MessageService {
                 updatedMessage.setTime_posted_epoch(fetchMessage.get().getTime_posted_epoch());
                 Message result = messageDao.updateMessage(updatedMessage);
 
-                // Optional<Message> verifyMessage = Optional.of(messageDao.findMessageById(messageId));
                 return result;
             } else {
                 System.out.println("No message found");
-                // return null;
                 throw new InterruptedException();
             }
         }
 
         public Message fetchMessage(int messageId){
-            try{
-                Optional<Message> selectMessage = Optional.of(messageDao.findMessageById(messageId));
-                if(selectMessage.isPresent()) {
-                    return selectMessage.get();
-                } else {
-                    return null;
-                }
-            } catch(IllegalArgumentException e){
-                System.out.println("Message not found");
-                throw new IllegalArgumentException(e.getMessage());
+            if(messageDao.findMessageById(messageId) != null) {
+                Message selectMessage = messageDao.findMessageById(messageId);
+                return selectMessage;
+            } else {
+                return null;
             }
-        }
+    }
 
         public List<Message> fetchAllMessage(){
             List<Message> collectAllMessage = messageDao.getAllMessages();
@@ -103,12 +93,6 @@ public class MessageService {
             List<Message> collectAllMessage = messageDao.getAllMessagesByUser(accountId);
             return collectAllMessage;
         }
-
-
-
-
-
-
 
      }
 
